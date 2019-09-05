@@ -13,5 +13,6 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "preserveSymlinks": true,
+    "jsx": "react"
   }
 }

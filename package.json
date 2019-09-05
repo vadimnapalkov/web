@@ -2,7 +2,8 @@
   "name": "test-web",
   "private": true,
   "scripts": {
-    "gateway:dev": "yarn workspace @backend/gateway dev",
+    "backend:dev": "yarn workspace @backend/gateway dev",
+    "frontend:dev": "yarn workspace @frontend/dashboard dev",
     "typecheck": "lerna run typecheck",
     "lint": "tslint --project tsconfig.json -c tslint.json -t codeFrame backend/**/*.ts"
   },
@@ -11,6 +12,12 @@
     "tslint": "^5.17.0",
     "husky": "^2.4.1"
   },
+  "workspaces": [
+    "backend/*",
+    "frontend/*",
+    "frontend/ui/*",
+    "frontend/utils/*"
+  ],
   "husky": {
     "hooks": {
       "pre-push": "yarn lint && yarn typecheck"

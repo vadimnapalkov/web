@@ -1,16 +1,16 @@
-import gql from 'graphql-tag'
-import { auth } from '@aunited/common/src/constants/security'
-import * as actions from '../constants'
-import stub from './stub'
+import gql from 'graphql-tag';
+import { auth } from '@frontend/common/src/constants/security';
+import * as actions from '../constants';
+import stub from './stub';
 
 export const change = (field, value) => ({
   type: actions.change,
   field,
-  value,
-})
+  value
+});
 
 export const login = () => async (dispatch, getState, client) => {
-  const { email, password } = getState().auth.login
+  const { email, password } = getState().auth.login;
 
   try {
     const { data } = await client.query({
@@ -31,18 +31,18 @@ export const login = () => async (dispatch, getState, client) => {
       `,
       variables: {
         email,
-        password,
-      },
-    })
+        password
+      }
+    });
   } catch (e) {
     dispatch({
       type: auth,
       token: stub.token,
-      expiresIn: stub.expiresIn,
-    })
+      expiresIn: stub.expiresIn
+    });
 
     dispatch({
-      type: actions.clear,
-    })
+      type: actions.clear
+    });
   }
-}
+};

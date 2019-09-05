@@ -11,25 +11,19 @@ import { GraphQLDate, GraphQLTime, GraphQLDateTime } from 'graphql-iso-date'
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_HOST || 'db',
-      database: process.env.DB_NAME || 'au',
+      host: process.env.DB_HOST || '127.0.0.1',
+      database: process.env.DB_NAME || 'auacademy',
       username: process.env.DB_USERNAME || 'root',
       password: process.env.DB_PASSWORD || 'root',
-      entities: [
-        '../**/src/**/entities/**.ts',
-      ],
-      migrations: [
-        '../**/migrations/**.ts',
-      ],
+      entities: ['../**/src/**/entities/**.ts'],
+      migrations: ['../**/migrations/**.ts'],
       migrationsRun: false,
       synchronize: true,
       logging: false,
     }),
     GraphQLModule.forRoot({
       path: '/graphql',
-      typePaths: [
-        '../**/*.graphql',
-      ],
+      typePaths: ['../**/*.graphql'],
       installSubscriptionHandlers: false,
       resolvers: {
         Date: GraphQLDate,

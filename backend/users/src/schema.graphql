@@ -3,7 +3,7 @@ type User {
   email: String!
   profile: Profile
   registeredAt: DateTime
-  lastLogonAt: DeteTime
+  lastLogonAt: DateTime
 }
 
 type Profile {
