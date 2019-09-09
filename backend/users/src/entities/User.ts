@@ -14,6 +14,12 @@ export class User {
   @Column()
   password: string
 
+  @Column()
+  registeredAt: Date
+
+  @Column()
+  lastLogonAt: Date
+
   @OneToOne(type => Profile, profile => profile.user, { cascade: true })
   @JoinColumn()
   profile: Profile

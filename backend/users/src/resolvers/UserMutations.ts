@@ -1,7 +1,7 @@
 import { Args, Mutation } from '@nestjs/graphql'
-import { RegisterUserDto, UpdateProfileDto } from '../dto'
+import { RegisterUserDto, UpdateProfileDto, LoginUserDto } from '../dto'
 import { CommandBus } from '@nestjs/cqrs'
-import { RegisterUserCommand } from '../commands/impl'
+import { RegisterUserCommand, LoginUserCommand } from '../commands/impl'
 import { Injectable } from '@nestjs/common'
 import { ResourceAccess } from '@backend/common'
 import { ActionType, PossessionType } from '@backend/roles'
@@ -12,12 +12,12 @@ export class UserMutations {
 
   @Mutation('register')
   async register(@Args('input') { email, password, firstName, lastName }: RegisterUserDto) {
-    const success = await this.commandBus.execute(new RegisterUserCommand(email, password, firstName, lastName))
+    return this.commandBus.execute(new RegisterUserCommand(email, password, firstName, lastName))
+  }
 
-    return {
-      success,
-      errors: success ? null : { email, password },
-    }
+  @Mutation('login')
+  async login(@Args('input') { email, password }: LoginUserDto) {
+    return this.commandBus.execute(new LoginUserCommand(email, password))
   }
 
   @ResourceAccess('profile', ActionType.update, PossessionType.own)

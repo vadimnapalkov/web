@@ -1,27 +1,34 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import { JWT_SECRET, SALT_FOR_PASSWORDS } from '@backend/gateway'
 
 import { RegisterUserCommand } from '../impl'
-import { User } from '../../entities'
-
-const SALT_FOR_PASSWORDS = process.env.SALT_FOR_PASSWORDS || '$2b$12$DXs0ONutZe3g/q1307ViPO'
+import { UserService } from '../../services'
 
 @CommandHandler(RegisterUserCommand)
 export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand> {
-  constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-  ) {}
+  constructor(private readonly userService: UserService) {}
   async execute(command: RegisterUserCommand) {
-    const { email, password, firstName, lastName } = command
-    const user = await this.userRepository.findOne({ email })
-    if (user) return false
-    const hash = await bcrypt.hash(password, SALT_FOR_PASSWORDS)
-    const newUser = { email, password: hash, profile: { firstName, lastName } }
-    await this.userRepository.save(newUser)
+    try {
+      const { email, password, firstName, lastName } = command
+      const user = await this.userService.findByEmail(email)
 
-    return true
+      if (user) throw new Error('User with this email already exists')
+      const hash = await bcrypt.hash(password, SALT_FOR_PASSWORDS)
+      const newUser = {
+        id: null,
+        email,
+        password: hash,
+        profile: { firstName, lastName },
+        registeredAt: new Date(),
+        lastLogonAt: new Date(),
+      }
+      await this.userService.create(newUser)
+
+      return { success: true, access_token: jwt.sign({ id: newUser.id, email: newUser.email }, JWT_SECRET) }
+    } catch (err) {
+      return { success: false, error: err.message }
+    }
   }
 }

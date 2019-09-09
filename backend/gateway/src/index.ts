@@ -8,3 +8,5 @@ async function bootstrap() {
 }
 
 bootstrap()
+
+export * from './config'

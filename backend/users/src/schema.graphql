@@ -11,14 +11,10 @@ type Profile {
   lastName: String!
 }
 
-type RegisterUserErrors {
-  email: String
-  password: String
-}
-
-type RegisterUserResponse {,
-  success: Boolean!
-  errors: RegisterUserErrors
+type AuthUserResponse {,
+  success: Boolean!,
+  access_token: String
+  error: String
 }
 
 input RegisterUserInput {
@@ -26,6 +22,11 @@ input RegisterUserInput {
   password: String!
   firstName: String!
   lastName: String!
+}
+
+input LoginUserInput {
+  email: String!
+  password: String!
 }
 
 type UpdateProfileErrors {
@@ -48,7 +49,8 @@ type UserList {
 }
 
 type Mutation {
-  register (input: RegisterUserInput!) : RegisterUserResponse!
+  register (input: RegisterUserInput!) : AuthUserResponse!
+  login (input: LoginUserInput!) : AuthUserResponse!
   updateProfile (input: UpdateProfileInput!) : UpdateProfileResponse!
 }
 

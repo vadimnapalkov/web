@@ -1,0 +1,6 @@
+export const DB_HOST = process.env.DB_HOST || '127.0.0.1'
+export const DB_NAME = process.env.DB_NAME || 'auacademy'
+export const DB_USERNAME = process.env.DB_USERNAME || 'root'
+export const DB_PASSWORD = process.env.DB_PASSWORD || 'root'
+export const SALT_FOR_PASSWORDS = process.env.SALT_FOR_PASSWORDS || '$2b$12$DXs0ONutZe3g/q1307ViPO'
+export const JWT_SECRET = process.env.JWT_SECRET || 'wiefh8y32r9u'
