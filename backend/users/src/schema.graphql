@@ -16,13 +16,16 @@ type RegisterUserErrors {
   password: String
 }
 
-type RegisterUserResponse {
+type RegisterUserResponse {,
+  success: Boolean!
   errors: RegisterUserErrors
 }
 
 input RegisterUserInput {
   email: String!
   password: String!
+  firstName: String!
+  lastName: String!
 }
 
 type UpdateProfileErrors {

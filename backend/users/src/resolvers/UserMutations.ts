@@ -8,20 +8,16 @@ import { ActionType, PossessionType } from '@backend/roles'
 
 @Injectable()
 export class UserMutations {
-  constructor(
-    private readonly commandBus: CommandBus,
-  ) {}
+  constructor(private readonly commandBus: CommandBus) {}
 
   @Mutation('register')
-  async register(@Args('input') input: RegisterUserDto) {
-    await this.commandBus.execute(
-      new RegisterUserCommand(
-        input.email,
-        input.password,
-      ),
-    )
+  async register(@Args('input') { email, password, firstName, lastName }: RegisterUserDto) {
+    const success = await this.commandBus.execute(new RegisterUserCommand(email, password, firstName, lastName))
 
-    return {}
+    return {
+      success,
+      errors: success ? null : { email, password },
+    }
   }
 
   @ResourceAccess('profile', ActionType.update, PossessionType.own)
