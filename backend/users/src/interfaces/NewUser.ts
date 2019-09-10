@@ -1,3 +1,5 @@
+import { Role } from '@backend/roles'
+
 export interface NewUser {
   id: null
   email: string
@@ -5,4 +7,5 @@ export interface NewUser {
   profile: { firstName: string; lastName: string }
   registeredAt: Date
   lastLogonAt: Date
+  role: Role
 }

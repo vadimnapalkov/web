@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { merge } from 'lodash'
+import { Role, RoleType } from '@backend/roles'
 
 import { User } from '../entities'
 import { NewUser } from '../interfaces'
@@ -11,6 +12,8 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Role)
+    private readonly roleRepository: Repository<Role>,
   ) {}
 
   async create(user: NewUser) {
@@ -21,11 +24,19 @@ export class UserService {
     await this.userRepository.save(merge(user, params))
   }
 
+  findAll() {
+    return this.userRepository.findAndCount({ relations: ['profile'] })
+  }
+
   findById(id: number): Promise<User> {
     return this.userRepository.findOne({ id }, { relations: ['profile'] })
   }
 
   findByEmail(email: string): Promise<User> {
-    return this.userRepository.findOne({ email })
+    return this.userRepository.findOne({ email }, { relations: ['role'] })
+  }
+
+  findRole(name: RoleType): Promise<Role> {
+    return this.roleRepository.findOne({ name })
   }
 }

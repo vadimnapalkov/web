@@ -24,7 +24,7 @@ export class User {
   @JoinColumn()
   profile: Profile
 
-  @ManyToOne(type => Role)
+  @ManyToOne(type => Role, { cascade: true })
   @JoinColumn()
   role: Role
 }

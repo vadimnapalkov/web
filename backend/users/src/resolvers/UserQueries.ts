@@ -18,16 +18,17 @@ export class UserQueries {
 
   @ResourceAccess('profile', ActionType.read, PossessionType.any)
   @Query()
-  async user(@Args('id') id: number) {
-    return {}
+  user(@Args('id') id: number) {
+    return this.userService.findById(id)
   }
 
   @ResourceAccess('profile', ActionType.read, PossessionType.any)
   @Query()
-  users() {
+  async users() {
+    const [rows, count] = await this.userService.findAll()
     return {
-      rows: [],
-      count: 0,
+      rows,
+      count,
     }
   }
 }
