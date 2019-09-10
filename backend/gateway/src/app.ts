@@ -18,7 +18,7 @@ import { DB_HOST, DB_NAME, DB_PASSWORD, DB_USERNAME } from './config'
       password: DB_PASSWORD,
       entities: ['../**/src/**/entities/**.ts'],
       migrations: ['../**/migrations/**.ts'],
-      migrationsRun: false,
+      migrationsRun: true,
       synchronize: true,
       logging: false,
     }),

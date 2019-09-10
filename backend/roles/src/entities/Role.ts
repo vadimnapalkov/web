@@ -1,9 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
-import { RoleType } from '../enums'
+import { RoleType, ActionType, PossessionType } from '../enums'
 
 export interface Permission {
-  resource: string
-  action: string
+  resource: PossessionType
+  action: ActionType
 }
 
 @Entity()

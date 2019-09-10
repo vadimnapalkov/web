@@ -5,10 +5,6 @@ import { Role } from './entities'
 export * from './enums'
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      Role,
-    ]),
-  ],
+  imports: [TypeOrmModule.forFeature([Role])],
 })
 export class RolesModule {}
