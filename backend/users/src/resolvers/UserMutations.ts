@@ -1,10 +1,12 @@
 import { Args, Mutation } from '@nestjs/graphql'
-import { RegisterUserDto, UpdateProfileDto, LoginUserDto } from '../dto'
 import { CommandBus } from '@nestjs/cqrs'
-import { RegisterUserCommand, LoginUserCommand } from '../commands/impl'
 import { Injectable } from '@nestjs/common'
-import { ResourceAccess } from '@backend/common'
+import { ResourceAccess, CurrentUser } from '@backend/common'
 import { ActionType, PossessionType } from '@backend/roles'
+
+import { RegisterUserCommand, LoginUserCommand, UpdateProfileCommand } from '../commands/impl'
+import { TokenData } from '../interfaces'
+import { RegisterUserDto, UpdateProfileDto, LoginUserDto } from '../dto'
 
 @Injectable()
 export class UserMutations {
@@ -22,7 +24,7 @@ export class UserMutations {
 
   @ResourceAccess('profile', ActionType.update, PossessionType.own)
   @Mutation('updateProfile')
-  async updateProfile(@Args('input') input: UpdateProfileDto) {
-    throw new Error('To be implemented UserMutations.updateProfile (ノಥ,_｣ಥ)ノ彡┻━┻')
+  async updateProfile(@CurrentUser() { id }: TokenData, @Args('input') { firstName, lastName }: UpdateProfileDto) {
+    return this.commandBus.execute(new UpdateProfileCommand(id, firstName, lastName))
   }
 }

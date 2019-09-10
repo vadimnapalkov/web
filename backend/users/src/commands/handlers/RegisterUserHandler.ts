@@ -29,7 +29,7 @@ export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand>
       }
       await this.userService.create(newUser)
 
-      return { success: true, access_token: jwt.sign({ id: newUser.id, email: newUser.email, role }, JWT_SECRET) }
+      return { success: true, access_token: jwt.sign({ id: newUser.id, email: newUser.email }, JWT_SECRET) }
     } catch (err) {
       return { success: false, error: err.message }
     }

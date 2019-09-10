@@ -29,18 +29,15 @@ input LoginUserInput {
   password: String!
 }
 
-type UpdateProfileErrors {
-  firstName: String
-  lastName: String
-}
-
 type UpdateProfileResponse {
-  errors: UpdateProfileErrors
+  success: Boolean!
+  error: String
 }
 
 input UpdateProfileInput {
   firstName: String!
   lastName: String!
+  role: String
 }
 
 type UserList {

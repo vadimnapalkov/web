@@ -19,7 +19,7 @@ export class LoginUserHandler implements ICommandHandler<LoginUserCommand> {
       if (user.password !== checkHash) throw new Error('Invalid password')
 
       this.userService.update(user, { lastLogonAt: new Date() })
-      return { success: true, access_token: jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET) }
+      return { success: true, access_token: jwt.sign({ id: user.id, email: user.email }, JWT_SECRET) }
     } catch (err) {
       return { success: false, error: err.message }
     }

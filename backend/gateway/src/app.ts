@@ -6,6 +6,7 @@ import { RolesModule } from '@backend/roles'
 import { APP_GUARD } from '@nestjs/core'
 import { AccessGuard, ResourceGuard, AuthMiddleware } from '@backend/common'
 import { GraphQLDate, GraphQLTime, GraphQLDateTime } from 'graphql-iso-date'
+
 import { DB_HOST, DB_NAME, DB_PASSWORD, DB_USERNAME } from './config'
 
 @Module({

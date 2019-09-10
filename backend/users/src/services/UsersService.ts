@@ -29,11 +29,11 @@ export class UserService {
   }
 
   findById(id: number): Promise<User> {
-    return this.userRepository.findOne({ id }, { relations: ['profile'] })
+    return this.userRepository.findOne({ id }, { relations: ['profile', 'role'] })
   }
 
   findByEmail(email: string): Promise<User> {
-    return this.userRepository.findOne({ email }, { relations: ['role'] })
+    return this.userRepository.findOne({ email })
   }
 
   findRole(name: RoleType): Promise<Role> {

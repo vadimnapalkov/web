@@ -12,6 +12,7 @@ export class AuthMiddleware implements NestMiddleware {
       const token = auth.replace(bearerRegex, '')
       try {
         const user = jwt.verify(token, JWT_SECRET)
+
         req.user = user
       } catch (err) {
         throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED)
