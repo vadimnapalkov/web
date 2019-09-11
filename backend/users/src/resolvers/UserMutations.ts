@@ -14,17 +14,32 @@ export class UserMutations {
 
   @Mutation('register')
   async register(@Args('input') { email, password, firstName, lastName }: RegisterUserDto) {
-    return this.commandBus.execute(new RegisterUserCommand(email, password, firstName, lastName))
+    try {
+      const accessToken = await this.commandBus.execute(new RegisterUserCommand(email, password, firstName, lastName))
+      return { success: true, access_token: accessToken }
+    } catch (err) {
+      return { success: false, error: err.message }
+    }
   }
 
   @Mutation('login')
   async login(@Args('input') { email, password }: LoginUserDto) {
-    return this.commandBus.execute(new LoginUserCommand(email, password))
+    try {
+      const accessToken = await this.commandBus.execute(new LoginUserCommand(email, password))
+      return { success: true, access_token: accessToken }
+    } catch (err) {
+      return { success: false, error: err.message }
+    }
   }
 
   @ResourceAccess('profile', ActionType.update, PossessionType.own)
   @Mutation('updateProfile')
   async updateProfile(@CurrentUser() { id }: TokenData, @Args('input') { firstName, lastName }: UpdateProfileDto) {
-    return this.commandBus.execute(new UpdateProfileCommand(id, firstName, lastName))
+    try {
+      await this.commandBus.execute(new UpdateProfileCommand(id, firstName, lastName))
+      return { success: true }
+    } catch (err) {
+      return { success: false, error: err.message }
+    }
   }
 }

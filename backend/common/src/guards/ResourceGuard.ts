@@ -20,11 +20,9 @@ export class ResourceGuard implements CanActivate {
       if (!req.user) return false
       this.userService = this.moduleRef.get(UserService, { strict: false })
       const user = await this.userService.findById(req.user.id)
+      const userAccess = findKey(user.role.permissions, resourceAccess)
 
-      if (user.role.name !== RoleType.support) {
-        const userAccess = findKey(user.role.permissions, resourceAccess)
-        if (!userAccess) return false
-      }
+      if (user.role.name !== RoleType.support && !userAccess) return false
     }
     return true
   }

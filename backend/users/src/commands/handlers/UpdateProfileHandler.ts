@@ -8,14 +8,9 @@ export class UpdateProfileHandler implements ICommandHandler<UpdateProfileComman
   constructor(private readonly userService: UserService) {}
 
   async execute(command: UpdateProfileCommand) {
-    try {
-      const { id, firstName, lastName } = command
-      const user = await this.userService.findById(id)
+    const { id, firstName, lastName } = command
+    const user = await this.userService.findById(id)
 
-      this.userService.update(user, { profile: { firstName, lastName } })
-      return { success: true }
-    } catch (err) {
-      return { success: false, error: err.message }
-    }
+    await this.userService.update(user, { profile: { firstName, lastName } })
   }
 }

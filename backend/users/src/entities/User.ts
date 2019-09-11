@@ -18,7 +18,7 @@ export class User {
   registeredAt: Date
 
   @Column()
-  lastLogonAt: Date
+  lastLoginAt: Date
 
   @OneToOne(type => Profile, profile => profile.user, { cascade: true })
   @JoinColumn()

@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common'
 import { delay, map } from 'rxjs/operators'
 
 import { UserRegisteredEvent } from '../events/impl'
-import { IventToEmailCommand } from '../commands/impl'
+import { WelcomeUserCommand } from '../commands/impl'
 
 @Injectable()
 export class UserSagas {
@@ -13,7 +13,7 @@ export class UserSagas {
     return events$.pipe(
       ofType(UserRegisteredEvent),
       delay(3000),
-      map(event => new IventToEmailCommand(event.email)),
+      map(event => new WelcomeUserCommand(event.email)),
     )
   }
 }

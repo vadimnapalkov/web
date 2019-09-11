@@ -2,13 +2,13 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { MailerService } from '@nest-modules/mailer'
 import { MAIL_FROM } from '@backend/gateway'
 
-import { IventToEmailCommand } from '../impl'
+import { WelcomeUserCommand } from '../impl'
 
-@CommandHandler(IventToEmailCommand)
-export class IventToEmailHandler implements ICommandHandler<IventToEmailCommand> {
+@CommandHandler(WelcomeUserCommand)
+export class WelcomeUserHandler implements ICommandHandler<WelcomeUserCommand> {
   constructor(private readonly mailerService: MailerService) {}
 
-  async execute(command: IventToEmailCommand) {
+  async execute(command: WelcomeUserCommand) {
     const { email } = command
 
     await this.mailerService.sendMail({

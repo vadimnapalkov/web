@@ -20,18 +20,34 @@ export class DefaultDataForRoles1514404694792 implements MigrationInterface {
       { resource: 'profile', possession: PossessionType.any, action: ActionType.delete },
     ]
 
-    await queryRunner.manager
-      .getRepository<Role>(Role)
-      .save(plainToClass(Role, { name: RoleType.user, permissions: permissionsForUser }))
+    await queryRunner.startTransaction()
+    try {
+      await queryRunner.manager
+        .getRepository<Role>(Role)
+        .save(plainToClass(Role, { name: RoleType.user, permissions: permissionsForUser }))
+      await queryRunner.manager
+        .getRepository<Role>(Role)
+        .save(plainToClass(Role, { name: RoleType.support, permissions: permissionsForSupport }))
 
-    await queryRunner.manager
-      .getRepository<Role>(Role)
-      .save(plainToClass(Role, { name: RoleType.support, permissions: permissionsForSupport }))
+      await queryRunner.commitTransaction()
+    } catch (err) {
+      await queryRunner.rollbackTransaction()
+    } finally {
+      await queryRunner.release()
+    }
   }
 
   public async down(queryRunner: QueryRunner): Promise<any> {
-    await queryRunner.manager.getRepository<Role>(Role).delete(plainToClass(Role, { name: RoleType.user }))
+    await queryRunner.startTransaction()
+    try {
+      await queryRunner.manager.getRepository<Role>(Role).delete(plainToClass(Role, { name: RoleType.user }))
+      await queryRunner.manager.getRepository<Role>(Role).delete(plainToClass(Role, { name: RoleType.support }))
 
-    await queryRunner.manager.getRepository<Role>(Role).delete(plainToClass(Role, { name: RoleType.support }))
+      await queryRunner.commitTransaction()
+    } catch (err) {
+      await queryRunner.rollbackTransaction()
+    } finally {
+      await queryRunner.release()
+    }
   }
 }

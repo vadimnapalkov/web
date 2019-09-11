@@ -11,7 +11,7 @@ export class AccessGuard implements CanActivate {
     const req = ctx.getContext()
 
     const withAuthAccess = this.reflector.get('AuthAccess', context.getHandler())
-    if (withAuthAccess) if (!req.user) return false
+    if (withAuthAccess && !req.user) return false
 
     return true
   }
