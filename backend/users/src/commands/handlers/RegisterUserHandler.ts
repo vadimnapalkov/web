@@ -1,15 +1,16 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
+import { CommandHandler, ICommandHandler, EventPublisher } from '@nestjs/cqrs'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { JWT_SECRET, SALT_FOR_PASSWORDS } from '@backend/gateway'
 import { RoleType } from '@backend/roles'
 
+import { User } from '../../models'
 import { RegisterUserCommand } from '../impl'
 import { UserService } from '../../services'
 
 @CommandHandler(RegisterUserCommand)
 export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand> {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService, private readonly publisher: EventPublisher) {}
   async execute(command: RegisterUserCommand) {
     try {
       const { email, password, firstName, lastName } = command
@@ -28,6 +29,10 @@ export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand>
         role,
       }
       await this.userService.create(newUser)
+
+      const userEvent = this.publisher.mergeObjectContext(new User(email))
+      userEvent.registered()
+      userEvent.commit()
 
       return { success: true, access_token: jwt.sign({ id: newUser.id, email: newUser.email }, JWT_SECRET) }
     } catch (err) {

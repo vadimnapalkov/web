@@ -6,8 +6,9 @@ import { RolesModule } from '@backend/roles'
 import { APP_GUARD } from '@nestjs/core'
 import { AccessGuard, ResourceGuard, AuthMiddleware } from '@backend/common'
 import { GraphQLDate, GraphQLTime, GraphQLDateTime } from 'graphql-iso-date'
+import { MailerModule } from '@nest-modules/mailer'
 
-import { DB_HOST, DB_NAME, DB_PASSWORD, DB_USERNAME } from './config'
+import { DB_HOST, DB_NAME, DB_PASSWORD, DB_USERNAME, MAIL_FROM, MAIL_TRANSPORT } from './config'
 
 @Module({
   imports: [
@@ -37,6 +38,12 @@ import { DB_HOST, DB_NAME, DB_PASSWORD, DB_USERNAME } from './config'
         return error
       },
       playground: true,
+    }),
+    MailerModule.forRoot({
+      transport: MAIL_TRANSPORT,
+      defaults: {
+        from: `<${MAIL_FROM}>`,
+      },
     }),
     UsersModule,
     RolesModule,
