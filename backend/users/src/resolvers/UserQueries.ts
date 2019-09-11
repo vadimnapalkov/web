@@ -1,28 +1,32 @@
 import { Query, Args } from '@nestjs/graphql'
 import { Injectable } from '@nestjs/common'
-import { AuthAccess, ResourceAccess } from '@backend/common'
+import { QueryBus } from '@nestjs/cqrs'
+import { AuthAccess, ResourceAccess, CurrentUser } from '@backend/common'
 import { ActionType, PossessionType } from '@backend/roles'
+
+import { GetUserQuery, GetUsersQuery } from '../queries/impl'
+import { UserService } from '../services'
+import { TokenData } from '../interfaces'
 
 @Injectable()
 export class UserQueries {
+  constructor(private readonly userService: UserService, private readonly queryBus: QueryBus) {}
+
   @AuthAccess()
   @Query()
-  async me() {
-    return {}
+  me(@CurrentUser() user: TokenData) {
+    return this.queryBus.execute(new GetUserQuery(user.id))
   }
 
   @ResourceAccess('profile', ActionType.read, PossessionType.any)
   @Query()
-  async user(@Args('id') id: number) {
-    return {}
+  user(@Args('id') id: number) {
+    return this.queryBus.execute(new GetUserQuery(id))
   }
 
   @ResourceAccess('profile', ActionType.read, PossessionType.any)
   @Query()
-  users() {
-    return {
-      rows: [],
-      count: 0,
-    }
+  async users() {
+    return this.queryBus.execute(new GetUsersQuery())
   }
 }

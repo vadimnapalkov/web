@@ -1,17 +1,18 @@
-import { CanActivate, ExecutionContext } from '@nestjs/common'
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
+import { GqlExecutionContext } from '@nestjs/graphql'
 
+@Injectable()
 export class AccessGuard implements CanActivate {
-  constructor(
-    private readonly reflector: Reflector,
-  ) {}
+  constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean | Promise<boolean> {
-    const [, , ctx, req] = context.getArgs()
-    const user = ctx.user || req.user
+    const ctx = GqlExecutionContext.create(context)
+    const req = ctx.getContext()
 
     const withAuthAccess = this.reflector.get('AuthAccess', context.getHandler())
+    if (withAuthAccess && !req.user) return false
 
-    throw new Error('To be implemented AccessGuard.canActivate (╯°□°）╯︵ ┻━┻')
+    return true
   }
 }

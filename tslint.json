@@ -10,6 +10,8 @@
     "no-submodule-imports": false,
     "no-implicit-dependencies": false,
     "interface-name": false,
-    "arrow-parens": [true, "ban-single-arg-parens"]
+    "arrow-parens": [true, "ban-single-arg-parens"],
+    "curly": [true, "as-needed","ignore-same-line"],
+    "no-string-literal": false 
   }
 }

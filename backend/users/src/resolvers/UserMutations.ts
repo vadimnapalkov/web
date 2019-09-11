@@ -1,32 +1,45 @@
 import { Args, Mutation } from '@nestjs/graphql'
-import { RegisterUserDto, UpdateProfileDto } from '../dto'
 import { CommandBus } from '@nestjs/cqrs'
-import { RegisterUserCommand } from '../commands/impl'
 import { Injectable } from '@nestjs/common'
-import { ResourceAccess } from '@backend/common'
+import { ResourceAccess, CurrentUser } from '@backend/common'
 import { ActionType, PossessionType } from '@backend/roles'
+
+import { RegisterUserCommand, LoginUserCommand, UpdateProfileCommand } from '../commands/impl'
+import { TokenData } from '../interfaces'
+import { RegisterUserDto, UpdateProfileDto, LoginUserDto } from '../dto'
 
 @Injectable()
 export class UserMutations {
-  constructor(
-    private readonly commandBus: CommandBus,
-  ) {}
+  constructor(private readonly commandBus: CommandBus) {}
 
   @Mutation('register')
-  async register(@Args('input') input: RegisterUserDto) {
-    await this.commandBus.execute(
-      new RegisterUserCommand(
-        input.email,
-        input.password,
-      ),
-    )
+  async register(@Args('input') { email, password, firstName, lastName }: RegisterUserDto) {
+    try {
+      const accessToken = await this.commandBus.execute(new RegisterUserCommand(email, password, firstName, lastName))
+      return { success: true, access_token: accessToken }
+    } catch (err) {
+      return { success: false, error: err.message }
+    }
+  }
 
-    return {}
+  @Mutation('login')
+  async login(@Args('input') { email, password }: LoginUserDto) {
+    try {
+      const accessToken = await this.commandBus.execute(new LoginUserCommand(email, password))
+      return { success: true, access_token: accessToken }
+    } catch (err) {
+      return { success: false, error: err.message }
+    }
   }
 
   @ResourceAccess('profile', ActionType.update, PossessionType.own)
   @Mutation('updateProfile')
-  async updateProfile(@Args('input') input: UpdateProfileDto) {
-    throw new Error('To be implemented UserMutations.updateProfile (ノಥ,_｣ಥ)ノ彡┻━┻')
+  async updateProfile(@CurrentUser() { id }: TokenData, @Args('input') { firstName, lastName }: UpdateProfileDto) {
+    try {
+      await this.commandBus.execute(new UpdateProfileCommand(id, firstName, lastName))
+      return { success: true }
+    } catch (err) {
+      return { success: false, error: err.message }
+    }
   }
 }

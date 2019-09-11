@@ -8,8 +8,11 @@
   },
   "dependencies": {
     "@nestjs/common": "6.3.1",
-    "@nestjs/typeorm": "6.1.2",
     "@nestjs/cqrs": "6.0.0",
+    "@nestjs/typeorm": "6.1.2",
+    "bcrypt": "^3.0.6",
+    "class-validator": "^0.10.0",
+    "lodash": "^4.17.15",
     "typeorm": "0.2.18"
   },
   "devDependencies": {

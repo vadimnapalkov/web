@@ -4,20 +4,23 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { UsersModule } from '@backend/users'
 import { RolesModule } from '@backend/roles'
 import { APP_GUARD } from '@nestjs/core'
-import { AccessGuard, ResourceGuard } from '@backend/common'
+import { AccessGuard, ResourceGuard, AuthMiddleware } from '@backend/common'
 import { GraphQLDate, GraphQLTime, GraphQLDateTime } from 'graphql-iso-date'
+import { MailerModule } from '@nest-modules/mailer'
+
+import { DB_HOST, DB_NAME, DB_PASSWORD, DB_USERNAME, MAIL_FROM, MAIL_TRANSPORT } from './config'
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_HOST || '127.0.0.1',
-      database: process.env.DB_NAME || 'auacademy',
-      username: process.env.DB_USERNAME || 'root',
-      password: process.env.DB_PASSWORD || 'root',
+      host: DB_HOST,
+      database: DB_NAME,
+      username: DB_USERNAME,
+      password: DB_PASSWORD,
       entities: ['../**/src/**/entities/**.ts'],
       migrations: ['../**/migrations/**.ts'],
-      migrationsRun: false,
+      migrationsRun: true,
       synchronize: true,
       logging: false,
     }),
@@ -30,11 +33,17 @@ import { GraphQLDate, GraphQLTime, GraphQLDateTime } from 'graphql-iso-date'
         Time: GraphQLTime,
         DateTime: GraphQLDateTime,
       },
-      rootValue: ({ req }) => req,
+      context: ({ req }) => req,
       formatError: error => {
         return error
       },
       playground: true,
+    }),
+    MailerModule.forRoot({
+      transport: MAIL_TRANSPORT,
+      defaults: {
+        from: `<${MAIL_FROM}>`,
+      },
     }),
     UsersModule,
     RolesModule,
@@ -52,6 +61,6 @@ import { GraphQLDate, GraphQLTime, GraphQLDateTime } from 'graphql-iso-date'
 })
 export class ApplicationModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    // TODO: connect middleware here
+    consumer.apply(AuthMiddleware).forRoutes('graphql')
   }
 }

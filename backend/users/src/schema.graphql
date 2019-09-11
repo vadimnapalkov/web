@@ -3,7 +3,7 @@ type User {
   email: String!
   profile: Profile
   registeredAt: DateTime
-  lastLogonAt: DateTime
+  lastLoginAt: DateTime
 }
 
 type Profile {
@@ -11,32 +11,33 @@ type Profile {
   lastName: String!
 }
 
-type RegisterUserErrors {
-  email: String
-  password: String
-}
-
-type RegisterUserResponse {
-  errors: RegisterUserErrors
+type AuthUserResponse {,
+  success: Boolean!,
+  access_token: String
+  error: String
 }
 
 input RegisterUserInput {
   email: String!
   password: String!
+  firstName: String!
+  lastName: String!
 }
 
-type UpdateProfileErrors {
-  firstName: String
-  lastName: String
+input LoginUserInput {
+  email: String!
+  password: String!
 }
 
 type UpdateProfileResponse {
-  errors: UpdateProfileErrors
+  success: Boolean!
+  error: String
 }
 
 input UpdateProfileInput {
   firstName: String!
   lastName: String!
+  role: String
 }
 
 type UserList {
@@ -45,7 +46,8 @@ type UserList {
 }
 
 type Mutation {
-  register (input: RegisterUserInput!) : RegisterUserResponse!
+  register (input: RegisterUserInput!) : AuthUserResponse!
+  login (input: LoginUserInput!) : AuthUserResponse!
   updateProfile (input: UpdateProfileInput!) : UpdateProfileResponse!
 }
 
